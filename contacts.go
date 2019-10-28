@@ -22,8 +22,6 @@ func (h *ZohoHeaders) GetAllContacts() ZohoContactsAllResponse {
 
 	url := fmt.Sprintf("%s/contacts", ZohoBaseURL)
 
-	//zh := &ZohoHeaders{}
-
 	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
 
 	c := &http.Client{}
@@ -34,6 +32,10 @@ func (h *ZohoHeaders) GetAllContacts() ZohoContactsAllResponse {
 		fmt.Println("Error creating HTTP request to GetAllTickets")
 		ZohoErrHandler(err)
 	}
+
+	// Limit defaults to 10
+	q := req.URL.Query()
+	q.Add("limit", "100")
 
 	req.Header.Set("orgId", h.OrgID)
 	req.Header.Set("Authorization", tokenHeaderString)

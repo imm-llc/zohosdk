@@ -63,8 +63,6 @@ func (h *ZohoHeaders) GetAllTickets(statuses string) []string {
 
 	url := fmt.Sprintf("%s/tickets", ZohoBaseURL)
 
-	//zh := &ZohoHeaders{}
-
 	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
 
 	c := &http.Client{}
