@@ -14,11 +14,12 @@ type ZohoHeaders struct {
 	OrgID string
 }
 
-// You must initialize this package by providing your API token and Organization ID
-func (h *ZohoHeaders) main() {
+func main() {
+	fmt.Println("Hello from the BHI Zoho SDK")
 
 }
 
+// ZohoErrHandler handles all errors
 func ZohoErrHandler(e error) {
 	fmt.Println("ZOHO SDK ERROR")
 	panic(e)

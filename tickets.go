@@ -59,13 +59,13 @@ type ZohoGetSingleTicketResponse struct {
 }
 
 // GetAllTickets Get all tickets of the given status, returning a list of Ticket IDs
-func GetAllTickets(statuses []string) []string {
+func (h *ZohoHeaders) GetAllTickets(statuses []string) []string {
 
 	url := fmt.Sprintf("%s/tickets", ZohoBaseURL)
 
-	zh := &ZohoHeaders{}
+	//zh := &ZohoHeaders{}
 
-	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", zh.Token)
+	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
 
 	c := &http.Client{}
 
@@ -84,7 +84,7 @@ func GetAllTickets(statuses []string) []string {
 
 	req.URL.RawQuery = q.Encode()
 
-	req.Header.Set("orgId", zh.OrgID)
+	req.Header.Set("orgId", h.OrgID)
 	req.Header.Set("Authorization", tokenHeaderString)
 
 	resp, err := c.Do(req)
