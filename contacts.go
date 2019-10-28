@@ -29,6 +29,13 @@ type ZohoContactsViewsResponse struct {
 	} `json:"data"`
 }
 
+type ZohoSingleContactResponse struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	ID        string `json:"id"`
+	Email     string `json:"email"`
+}
+
 // GetAllContacts returns a ZohoContactsAll struct
 func (h *ZohoHeaders) GetAllContacts() ZohoContactsAllResponse {
 
@@ -177,4 +184,51 @@ func (h *ZohoHeaders) GetContactCount(v string) ZohoContactsCountResponse {
 	}
 
 	return r
+}
+
+func (h *ZohoHeaders) GetSingleContact(id string) ZohoSingleContactResponse {
+
+	url := fmt.Sprintf("%s/contacts/%s", ZohoBaseURL, id)
+
+	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
+
+	c := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println("Error creating HTTP request to GetAllTickets")
+		ZohoErrHandler(err)
+	}
+
+	req.Header.Set("orgId", h.OrgID)
+	req.Header.Set("Authorization", tokenHeaderString)
+
+	resp, err := c.Do(req)
+
+	if err != nil {
+		fmt.Println("Error making request to Zoho API to GetAllContacts")
+		ZohoErrHandler(err)
+	}
+
+	responseBody, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println("Error reading GetAllContacts response")
+		ZohoErrHandler(err)
+	}
+
+	r := ZohoSingleContactResponse{}
+
+	err = json.Unmarshal(responseBody, &r)
+
+	if err != nil {
+		fmt.Println("Error unmarshalling GetSingleContact JSON")
+		fmt.Println("Dumping response body for debugging")
+		fmt.Println(string(responseBody))
+		ZohoErrHandler(err)
+	}
+
+	return r
+
 }
