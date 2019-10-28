@@ -1,6 +1,10 @@
 package zohosdk
 
 import (
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
+	"net/http"
 	"time"
 )
 
@@ -48,23 +52,74 @@ type ZohoGetAllTicketsResponse struct {
 	} `json:"data"`
 }
 
-type ZohoTicket struct {
+type ZohoGetSingleTicketResponse struct {
 	TicketNumber string `json:"ticketNumber"`
 	Subject      string `json:"subject"`
 	Description  string `json:"description"`
 }
 
-type ZohoTicketUpdate struct {
-	Channel string `json:"channel"`
-	Content string `json:"content"`
-}
+// GetAllTickets Get all tickets of the given status, returning a list of Ticket IDs
+func GetAllTickets(statuses []string) []string {
 
-type ZohoHeaders struct {
-	Token string
-	OrgID string
-}
+	url := fmt.Sprintf("%s/tickets", ZohoBaseURL)
 
-// Get a
-func (h *ZohoHeaders) GetAllTickets() {
+	zh := &ZohoHeaders{}
+
+	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", zh.Token)
+
+	c := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println("Error creating HTTP request to GetAllTickets")
+		ZohoErrHandler(err)
+	}
+
+	q := req.URL.Query()
+
+	for _, s := range statuses {
+		q.Add("status", s)
+	}
+
+	req.URL.RawQuery = q.Encode()
+
+	req.Header.Set("orgId", zh.OrgID)
+	req.Header.Set("Authorization", tokenHeaderString)
+
+	resp, err := c.Do(req)
+
+	if err != nil {
+		fmt.Println("Error making request to Zoho API")
+		ZohoErrHandler(err)
+	}
+
+	responseBody, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println("Error reading Zoho response")
+		panic(err)
+	}
+
+	r := ZohoGetAllTicketsResponse{}
+
+	err = json.Unmarshal(responseBody, &r)
+
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON")
+		panic(err)
+	}
+
+	fmt.Println("Unmarshalled JSON")
+
+	//var ticketStringSlice []string
+
+	ticketStringSlice := make([]string, len(r.Data))
+
+	for i, t := range r.Data {
+		ticketStringSlice[i] = t.ID
+	}
+
+	return ticketStringSlice
 
 }
