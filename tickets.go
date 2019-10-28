@@ -123,3 +123,51 @@ func (h *ZohoHeaders) GetAllTickets(statuses []string) []string {
 	return ticketStringSlice
 
 }
+
+// GetSingleTicket returns a struct of the ticket subject, description, and ticket number
+func (h *ZohoHeaders) GetSingleTicket(id string) ZohoGetSingleTicketResponse {
+
+	url := fmt.Sprintf("%s/tickets/%s", ZohoBaseURL, id)
+
+	//zh := &ZohoHeaders{}
+
+	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
+
+	c := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+
+	if err != nil {
+		fmt.Println("Error creating HTTP request to GetAllTickets")
+		ZohoErrHandler(err)
+	}
+
+	req.Header.Set("orgId", h.OrgID)
+	req.Header.Set("Authorization", tokenHeaderString)
+
+	resp, err := c.Do(req)
+
+	if err != nil {
+		fmt.Println("Error making request to Zoho API")
+		ZohoErrHandler(err)
+	}
+
+	responseBody, err := ioutil.ReadAll(resp.Body)
+
+	if err != nil {
+		fmt.Println("Error reading Zoho response")
+		panic(err)
+	}
+
+	r := ZohoGetSingleTicketResponse{}
+
+	err = json.Unmarshal(responseBody, &r)
+
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON")
+		panic(err)
+	}
+
+	return r
+
+}
