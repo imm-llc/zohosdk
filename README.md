@@ -20,7 +20,7 @@ func main() {
 		"ORGANZATION ID",
 	}
 
-	t := zsdk.GetAllTickets([]string{"OPEN"})
+	t := zsdk.GetAllTickets("OPEN,WATCHING")
 
 	fmt.Println(t)
 

@@ -59,7 +59,7 @@ type ZohoGetSingleTicketResponse struct {
 }
 
 // GetAllTickets Get all tickets of the given status, returning a list of Ticket IDs
-func (h *ZohoHeaders) GetAllTickets(statuses []string) []string {
+func (h *ZohoHeaders) GetAllTickets(statuses string) []string {
 
 	url := fmt.Sprintf("%s/tickets", ZohoBaseURL)
 
@@ -78,9 +78,8 @@ func (h *ZohoHeaders) GetAllTickets(statuses []string) []string {
 
 	q := req.URL.Query()
 
-	for _, s := range statuses {
-		q.Add("status", s)
-	}
+	// statuses should be e.g. "ON HOLD,OPEN,WAITING"
+	q.Add("status", statuses)
 
 	req.URL.RawQuery = q.Encode()
 
@@ -90,7 +89,7 @@ func (h *ZohoHeaders) GetAllTickets(statuses []string) []string {
 	resp, err := c.Do(req)
 
 	if err != nil {
-		fmt.Println("Error making request to Zoho API")
+		fmt.Println("Error making request to Zoho API to GetAllTickets")
 		ZohoErrHandler(err)
 	}
 
@@ -106,8 +105,8 @@ func (h *ZohoHeaders) GetAllTickets(statuses []string) []string {
 	err = json.Unmarshal(responseBody, &r)
 
 	if err != nil {
-		fmt.Println("Error unmarshalling JSON")
-		panic(err)
+		fmt.Println("Error unmarshalling GetAllTickets JSON")
+		ZohoErrHandler(err)
 	}
 
 	fmt.Println("Unmarshalled JSON")
