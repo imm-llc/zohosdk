@@ -1,7 +1,9 @@
 package zohosdk
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -131,8 +133,6 @@ func (h *ZohoHeaders) GetSingleTicket(id string) ZohoGetSingleTicketResponse {
 
 	url := fmt.Sprintf("%s/tickets/%s", ZohoBaseURL, id)
 
-	//zh := &ZohoHeaders{}
-
 	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
 
 	c := &http.Client{}
@@ -172,4 +172,53 @@ func (h *ZohoHeaders) GetSingleTicket(id string) ZohoGetSingleTicketResponse {
 
 	return r
 
+}
+
+type ZohoTicketStatusUpdateBody struct {
+	Status string `json:"status"`
+}
+
+func (h *ZohoHeaders) UpdateTicketStatus(id string, status string) error {
+
+	url := fmt.Sprintf("%s/tickets/%s", ZohoBaseURL, id)
+
+	//zh := &ZohoHeaders{}
+
+	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
+
+	c := &http.Client{}
+
+	j := ZohoTicketStatusUpdateBody{
+		Status: status,
+	}
+
+	jsonBody, err := json.Marshal(j)
+
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", url, bytes.NewReader(jsonBody))
+
+	if err != nil {
+		fmt.Println("Error creating HTTP request to UpdateTicketStatus")
+		return err
+	}
+
+	req.Header.Set("orgId", h.OrgID)
+	req.Header.Set("Authorization", tokenHeaderString)
+
+	resp, err := c.Do(req)
+
+	if err != nil {
+		fmt.Println("Error making request to Zoho API")
+		return err
+	}
+
+	if resp.StatusCode != 200 {
+		fmt.Println("HTTP Resposne from UpdateTicketStatus:", resp.StatusCode)
+		return errors.New("Bad Zoho HTTP Response")
+	}
+
+	return nil
 }
