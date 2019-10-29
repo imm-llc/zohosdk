@@ -198,7 +198,7 @@ func (h *ZohoHeaders) UpdateTicketStatus(id string, status string) error {
 		return err
 	}
 
-	req, err := http.NewRequest("POST", url, bytes.NewReader(jsonBody))
+	req, err := http.NewRequest("PATCH", url, bytes.NewReader(jsonBody))
 
 	if err != nil {
 		fmt.Println("Error creating HTTP request to UpdateTicketStatus")
@@ -216,7 +216,7 @@ func (h *ZohoHeaders) UpdateTicketStatus(id string, status string) error {
 	}
 
 	if resp.StatusCode != 200 {
-		fmt.Println("HTTP Resposne from UpdateTicketStatus:", resp.StatusCode)
+		fmt.Println("HTTP Response from UpdateTicketStatus:", resp.StatusCode)
 		return errors.New("Bad Zoho HTTP Response")
 	}
 
