@@ -140,6 +140,7 @@ func (h *ZohoHeaders) ListContactViews() ZohoContactsViewsResponse {
 
 }
 
+//GetContactCount retrieves an object. Access object.Count
 func (h *ZohoHeaders) GetContactCount(v string) ZohoContactsCountResponse {
 
 	url := fmt.Sprintf("%s/contacts/count?viewId=%s", ZohoBaseURL, v)
