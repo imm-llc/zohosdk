@@ -2,6 +2,7 @@ package zohosdk
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -34,8 +35,10 @@ func (h *ZohoHeaders) GetTicketThreadSummary(id string) (string, error) {
 
 	responseBody, err := ioutil.ReadAll(resp.Body)
 
-	fmt.Println("Ticket thread response: ", responseBody)
-	fmt.Println("HTTP Status code: ", resp.StatusCode)
+	if resp.StatusCode != 200 {
+		fmt.Println("Ticket thread response: ", string(responseBody))
+		return fmt.Sprintf("HTTP Status code: %d", resp.StatusCode), errors.New("Bad Zoho Response")
+	}
 
 	if err != nil {
 		fmt.Println("Error reading Zoho response")
