@@ -13,7 +13,7 @@ type ZohoThread struct {
 }
 
 // GetTicketThreadSummary returns the summary of a ticket thread
-func (h *ZohoHeaders) GetTicketThreadSummary(id string) string {
+func (h *ZohoHeaders) GetTicketThreadSummary(id string) (string, error) {
 	url := fmt.Sprintf("%s/%s/latestThread", ZohoBaseURL, id)
 
 	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
@@ -34,9 +34,12 @@ func (h *ZohoHeaders) GetTicketThreadSummary(id string) string {
 
 	responseBody, err := ioutil.ReadAll(resp.Body)
 
+	fmt.Println("Ticket thread response: ", responseBody)
+	fmt.Println("HTTP Status code: ", resp.StatusCode)
+
 	if err != nil {
 		fmt.Println("Error reading Zoho response")
-		panic(err)
+		return "", err
 	}
 
 	r := ZohoThread{}
@@ -45,9 +48,9 @@ func (h *ZohoHeaders) GetTicketThreadSummary(id string) string {
 
 	if err != nil {
 		fmt.Println("Error unmarshalling JSON")
-		panic(err)
+		return "", err
 	}
 
-	return r.Summary
+	return r.Summary, nil
 
 }
