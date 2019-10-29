@@ -218,7 +218,22 @@ func (h *ZohoHeaders) UpdateTicketStatus(id string, status string) error {
 	if resp.StatusCode != 200 {
 		fmt.Println("HTTP Response from UpdateTicketStatus:", resp.StatusCode)
 		return errors.New("Bad Zoho HTTP Response")
+	} else {
+		respBody, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Error reading UpdateTicketStatus response body")
+			return err
+		} else {
+			err := json.Unmarshal(respBody, &j)
+			if err != nil {
+				fmt.Println("Error unmarshalling UpdateTicketStatus response body")
+				return err
+			} else {
+				if j.Status != status {
+					return errors.New("Ticket status unchanged. Make sure you're setting the new status to something that exists in Zoho")
+				}
+			}
+		}
 	}
-
 	return nil
 }
