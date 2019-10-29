@@ -98,6 +98,11 @@ func (h *ZohoHeaders) GetAllTickets(statuses string) []string {
 		panic(err)
 	}
 
+	// 204, no content, no tickets found
+	if resp.StatusCode == 204 {
+		return []string{}
+	}
+
 	r := ZohoGetAllTicketsResponse{}
 
 	err = json.Unmarshal(responseBody, &r)
