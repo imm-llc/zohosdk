@@ -16,7 +16,7 @@ type ZohoThread struct {
 // GetTicketThreadSummary returns the summary of a ticket thread
 func (h *ZohoHeaders) GetTicketThreadSummary(id string) (string, error) {
 
-	url := fmt.Sprintf("%s/%s/latestThread", ZohoBaseURL, id)
+	url := fmt.Sprintf("%s/tickets/%s/latestThread", ZohoBaseURL, id)
 
 	tokenHeaderString := fmt.Sprintf("Zoho-authtoken %s", h.Token)
 
