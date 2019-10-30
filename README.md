@@ -2,7 +2,7 @@
 
 ## Usage
 
-A quick example to retrieve the IDs of all tickets marked "OPEN" (A Zoho built-in)
+A quick example to retrieve the IDs of all tickets marked "OPEN" (A Zoho built-in) and "WATCHING" (a custom status)
 
 
 ```
